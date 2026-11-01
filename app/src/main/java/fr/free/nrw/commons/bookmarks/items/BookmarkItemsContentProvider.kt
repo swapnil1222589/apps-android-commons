@@ -57,23 +57,20 @@ class BookmarkItemsContentProvider : CommonsDaggerContentProvider() {
         selection: String?,
         selectionArgs: Array<String>?,
     ): Int {
+        require(selection.isNullOrEmpty()) {
+            "Parameter `selection` should be empty when updating an ID"
+        }
+        val id = uri.lastPathSegment!!.toInt()
         val rowsUpdated: Int =
-            if (selection.isNullOrEmpty()) {
-                val id = uri.lastPathSegment!!.toInt()
-                contentValues?.let {
-                    requireDb().update(
-                        TABLE_NAME,
-                        SQLiteDatabase.CONFLICT_NONE,
-                        it,
-                        "$COLUMN_ID = ?",
-                        arrayOf(id.toString()),
-                    )
-                } ?: 0
-            } else {
-                throw IllegalArgumentException(
-                    "Parameter `selection` should be empty when updating an ID",
+            contentValues?.let {
+                requireDb().update(
+                    TABLE_NAME,
+                    SQLiteDatabase.CONFLICT_NONE,
+                    it,
+                    "$COLUMN_ID = ?",
+                    arrayOf(id.toString()),
                 )
-            }
+            } ?: 0
         context?.contentResolver?.notifyChange(uri, null)
         return rowsUpdated
     }

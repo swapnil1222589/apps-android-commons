@@ -45,7 +45,7 @@ class BookmarkPicturesDao
                     items.add(fromCursor(cursor))
                 }
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
                 cursor?.close()
                 db.release()
@@ -79,7 +79,7 @@ class BookmarkPicturesDao
             try {
                 db.insert(BASE_URI, toContentValues(bookmark))
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
                 db.release()
             }
@@ -94,12 +94,12 @@ class BookmarkPicturesDao
             val db = clientProvider.get()
             try {
                 if (bookmark.contentUri == null) {
-                    throw RuntimeException("tried to delete item with no content URI")
+                    error("tried to delete item with no content URI")
                 } else {
                     db.delete(bookmark.contentUri!!, null, null)
                 }
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
                 db.release()
             }
@@ -116,27 +116,25 @@ class BookmarkPicturesDao
                 return false
             }
 
-            var cursor: Cursor? = null
             val db = clientProvider.get()
+            var exists = false
             try {
-                cursor =
-                    db.query(
+                db
+                    .query(
                         BASE_URI,
                         ALL_FIELDS,
                         "$COLUMN_MEDIA_NAME=?",
                         arrayOf(bookmark.mediaName),
                         null,
-                    )
-                if (cursor != null && cursor.moveToFirst()) {
-                    return true
-                }
+                    )?.use { cursor ->
+                        exists = cursor.moveToFirst()
+                    }
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
-                cursor?.close()
                 db.release()
             }
-            return false
+            return exists
         }
 
         fun fromCursor(cursor: Cursor): Bookmark {

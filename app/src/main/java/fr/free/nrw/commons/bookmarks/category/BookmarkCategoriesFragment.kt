@@ -111,13 +111,12 @@ class BookmarkCategoriesFragment : DaggerFragment() {
             }
         }
 
-    // Composable function per Jetpack Compose naming convention
     @Suppress("ktlint:standard:function-naming")
     @Composable
     fun CategoryItem(
-        modifier: Modifier = Modifier,
         onClick: (String) -> Unit,
         categoryName: String,
+        modifier: Modifier = Modifier,
     ) {
         Row(
             modifier =
@@ -146,7 +145,6 @@ class BookmarkCategoriesFragment : DaggerFragment() {
         }
     }
 
-    // Composable function per Jetpack Compose naming convention
     @Suppress("ktlint:standard:function-naming")
     @Preview
     @Composable

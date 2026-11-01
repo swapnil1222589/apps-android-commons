@@ -20,6 +20,7 @@ import fr.free.nrw.commons.utils.DialogUtil.showAlertDialog
 import fr.free.nrw.commons.utils.applyEdgeToEdgeTopInsets
 import fr.free.nrw.commons.utils.handleWebUrl
 import fr.free.nrw.commons.utils.setUnderlinedText
+import timber.log.Timber
 import java.util.Collections
 
 /**
@@ -92,6 +93,8 @@ class AboutActivity : BaseActivity() {
         return true
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchFacebook(view: View?) {
         val intent: Intent
         try {
@@ -99,10 +102,13 @@ class AboutActivity : BaseActivity() {
             intent.setPackage(Urls.FACEBOOK_PACKAGE_NAME)
             startActivity(intent)
         } catch (e: Exception) {
+            Timber.e(e, "Could not open the Facebook app, falling back to the web page")
             handleWebUrl(this, Urls.FACEBOOK_WEB_URL.toUri())
         }
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchGithub(view: View?) {
         val intent: Intent
         try {
@@ -110,14 +116,19 @@ class AboutActivity : BaseActivity() {
             intent.setPackage(Urls.GITHUB_PACKAGE_NAME)
             startActivity(intent)
         } catch (e: Exception) {
+            Timber.e(e, "Could not open the GitHub app, falling back to the web page")
             handleWebUrl(this, Urls.GITHUB_REPO_URL.toUri())
         }
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchWebsite(view: View?) {
         handleWebUrl(this, Urls.WEBSITE_URL.toUri())
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchRatings(view: View?) {
         try {
             startActivity(
@@ -131,18 +142,26 @@ class AboutActivity : BaseActivity() {
         }
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchCredits(view: View?) {
         handleWebUrl(this, Urls.CREDITS_URL.toUri())
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchUserGuide(view: View?) {
         handleWebUrl(this, Urls.USER_GUIDE_URL.toUri())
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchPrivacyPolicy(view: View?) {
         handleWebUrl(this, BuildConfig.PRIVACY_POLICY_URL.toUri())
     }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchFrequentlyAskedQuesions(view: View?) {
         handleWebUrl(this, Urls.FAQ_URL.toUri())
     }
@@ -177,6 +196,8 @@ class AboutActivity : BaseActivity() {
             else -> super.onOptionsItemSelected(item)
         }
 
+    // View.OnClickListener method reference, see onCreate
+    @Suppress("UnusedParameter")
     fun launchTranslate(view: View?) {
         val sortedLocalizedNamesRef = instance.languageLookUpTable!!.getCanonicalNames()
         Collections.sort(sortedLocalizedNamesRef)

@@ -1,7 +1,7 @@
 package fr.free.nrw.commons.utils
 
-import java.text.NumberFormat
 import fr.free.nrw.commons.location.LatLng
+import java.text.NumberFormat
 import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -18,7 +18,10 @@ object LengthUtils {
      * @return string distance
      */
     @JvmStatic
-    fun formatDistanceBetween(point1: LatLng?, point2: LatLng?): String? {
+    fun formatDistanceBetween(
+        point1: LatLng?,
+        point2: LatLng?,
+    ): String? {
         if (point1 == null || point2 == null) {
             return null
         }
@@ -38,9 +41,7 @@ object LengthUtils {
      */
     @JvmStatic
     fun formatDistance(distance: Int): String {
-        if (distance < 0) {
-            throw IllegalArgumentException("Distance must be non-negative")
-        }
+        require(distance >= 0) { "Distance must be non-negative" }
 
         val numberFormat = NumberFormat.getNumberInstance()
 
@@ -62,7 +63,10 @@ object LengthUtils {
      * @throws NullPointerException if one or both the points are null
      */
     @JvmStatic
-    fun computeDistanceBetween(point1: LatLng, point2: LatLng): Double {
+    fun computeDistanceBetween(
+        point1: LatLng,
+        point2: LatLng,
+    ): Double {
         return computeAngleBetween(point1, point2) * 6371009.0 // Earth's radius in meters
     }
 
@@ -75,14 +79,16 @@ object LengthUtils {
      * @throws NullPointerException if one or both the points are null
      */
     @JvmStatic
-    private fun computeAngleBetween(point1: LatLng, point2: LatLng): Double {
-        return distanceRadians(
+    private fun computeAngleBetween(
+        point1: LatLng,
+        point2: LatLng,
+    ): Double =
+        distanceRadians(
             Math.toRadians(point1.latitude),
             Math.toRadians(point1.longitude),
             Math.toRadians(point2.latitude),
-            Math.toRadians(point2.longitude)
+            Math.toRadians(point2.longitude),
         )
-    }
 
     /**
      * Computes arc length between 2 points
@@ -94,9 +100,12 @@ object LengthUtils {
      * @return Arc length between the points
      */
     @JvmStatic
-    private fun distanceRadians(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        return arcHav(havDistance(lat1, lat2, lng1 - lng2))
-    }
+    private fun distanceRadians(
+        lat1: Double,
+        lng1: Double,
+        lat2: Double,
+        lng2: Double,
+    ): Double = arcHav(havDistance(lat1, lat2, lng1 - lng2))
 
     /**
      * Computes inverse of haversine
@@ -105,9 +114,7 @@ object LengthUtils {
      * @return Inverse of haversine
      */
     @JvmStatic
-    private fun arcHav(x: Double): Double {
-        return 2.0 * asin(sqrt(x))
-    }
+    private fun arcHav(x: Double): Double = 2.0 * asin(sqrt(x))
 
     /**
      * Computes distance between two points that are on same Longitude
@@ -118,9 +125,11 @@ object LengthUtils {
      * @return Arc length between points
      */
     @JvmStatic
-    private fun havDistance(lat1: Double, lat2: Double, longitude: Double): Double {
-        return hav(lat1 - lat2) + hav(longitude) * cos(lat1) * cos(lat2)
-    }
+    private fun havDistance(
+        lat1: Double,
+        lat2: Double,
+        longitude: Double,
+    ): Double = hav(lat1 - lat2) + hav(longitude) * cos(lat1) * cos(lat2)
 
     /**
      * Computes haversine
@@ -144,7 +153,10 @@ object LengthUtils {
      * @throws NullPointerException if one or both the points are null
      */
     @JvmStatic
-    fun computeBearing(point1: LatLng, point2: LatLng): Double {
+    fun computeBearing(
+        point1: LatLng,
+        point2: LatLng,
+    ): Double {
         val diffLongitude = Math.toRadians(point2.longitude - point1.longitude)
         val lat1 = Math.toRadians(point1.latitude)
         val lat2 = Math.toRadians(point2.latitude)

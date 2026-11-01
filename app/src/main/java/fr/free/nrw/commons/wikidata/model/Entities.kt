@@ -5,20 +5,22 @@ import fr.free.nrw.commons.wikidata.mwapi.MwResponse
 import org.apache.commons.lang3.StringUtils
 
 class Entities : MwResponse() {
-    private val entities: Map<String, Entity>? = null
+    @SerializedName("entities")
+    private val entityMap: Map<String, Entity>? = null
     val success: Int = 0
 
-    fun entities(): Map<String, Entity> = entities ?: emptyMap()
+    fun getEntityMap(): Map<String, Entity> = entityMap ?: emptyMap()
 
     private val first: Entity?
-        get() = entities?.values?.iterator()?.next()
+        get() = entityMap?.values?.iterator()?.next()
 
     override fun postProcess() {
         first?.let {
-            if (it.isMissing()) throw RuntimeException("The requested entity was not found.")
+            if (it.isMissing()) throw NoSuchElementException("The requested entity was not found.")
         }
     }
 
+    @Suppress("UnusedPrivateProperty") // Fields deserialized by Gson via reflection
     class Entity {
         private val type: String? = null
         private val id: String? = null
@@ -50,6 +52,7 @@ class Entities : MwResponse() {
         fun value(): String = StringUtils.defaultString(value)
     }
 
+    @Suppress("UnusedPrivateProperty") // Fields deserialized by Gson via reflection
     class SiteLink {
         val site: String? = null
             get() = StringUtils.defaultString(field)

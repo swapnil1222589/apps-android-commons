@@ -57,7 +57,7 @@ class BookmarkItemsDao
                         }
                     }
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
                 db.release()
             }
@@ -88,7 +88,7 @@ class BookmarkItemsDao
             try {
                 db.insert(BASE_URI, toContentValues(depictedItem))
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
                 db.release()
             }
@@ -103,7 +103,7 @@ class BookmarkItemsDao
             try {
                 db.delete(uriForName(depictedItem.id), null, null)
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
                 db.release()
             }
@@ -119,6 +119,7 @@ class BookmarkItemsDao
                 return false
             }
             val db = clientProvider.get()
+            var exists = false
             try {
                 db
                     .query(
@@ -127,17 +128,15 @@ class BookmarkItemsDao
                         COLUMN_ID + "=?",
                         arrayOf(depictedItemID),
                         null,
-                    ).use { cursor ->
-                        if (cursor != null && cursor.moveToFirst()) {
-                            return true
-                        }
+                    )?.use { cursor ->
+                        exists = cursor.moveToFirst()
                     }
             } catch (e: RemoteException) {
-                throw RuntimeException(e)
+                throw IllegalStateException(e)
             } finally {
                 db.release()
             }
-            return false
+            return exists
         }
 
         /**
@@ -201,7 +200,8 @@ class BookmarkItemsDao
                 COLUMN_CATEGORIES_NAME_LIST to arrayToString(depictedItem.commonsCategories.map { it.name }),
                 COLUMN_CATEGORIES_DESCRIPTION_LIST to
                     arrayToString(depictedItem.commonsCategories.map { it.description }),
-                COLUMN_CATEGORIES_THUMBNAIL_LIST to arrayToString(depictedItem.commonsCategories.map { it.thumbnail }),
+                COLUMN_CATEGORIES_THUMBNAIL_LIST to
+                    arrayToString(depictedItem.commonsCategories.map { it.thumbnail }),
                 COLUMN_IS_SELECTED to depictedItem.isSelected,
                 COLUMN_ID to depictedItem.id,
             )
